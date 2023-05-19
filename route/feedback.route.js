@@ -1,14 +1,22 @@
 const router = require("express").Router();
-
+const mongoose = require("mongoose");
 const feedback = require("../model/feedback");
 
 //ADD FEEDBACK
+// 
+
 router.post("/addfeedback", async (req, res) => {
+  const { userId, productId, productName, productImage, userEmail} = req.body;
   const newFeedback = new feedback({
     feedbackId: req.body.feedbackId,
     email: req.body.email,
     satisfaction_rate: req.body.satisfaction_rate,
     message: req.body.message,
+    userId: userId,
+    productId: productId,
+    productName: productName,
+    productImage: productImage,
+    userEmail: userEmail,
   });
   let code = 1;
   try {
@@ -26,6 +34,7 @@ router.post("/addfeedback", async (req, res) => {
     console.log(error);
   }
 });
+
 // router.post("/addfeedback", async (req, res) => {
 //     const newFeedback = new feedback({
 //       feedbackId: req.body.feedbackId,
@@ -77,7 +86,7 @@ router.delete("/deletefeedback/:id", async (req, res) => {
   }
 });
 
-//GET BOOK
+//GET FEEDBACK
 router.get("/:id", async (req, res) => {
   try {
     const feedbacks = await feedback.findOne({ feedbackId: req.params.id });
@@ -94,6 +103,26 @@ router.get("/", async (req, res) => {
     res.status(200).json(feedbacks);
   } catch (err) {
     res.status(500).json(err);
+  }
+});
+
+//GET FEEDBACK BY UserId
+router.get("/grfb/:userId", async (req, res) => {
+  try {
+    const feedbacks = await feedback.find({ userId: req.params.userId });
+    res.status(200).json(feedbacks);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
+
+//GET FEEDBACK BY ProductId
+router.get("/grfbprd/:productId", async (req, res) => {
+  try {
+    const feedbacks = await feedback.find({ productId: req.params.productId });
+    res.status(200).json(feedbacks);
+  } catch (err) {
+    return res.status(500).json(err);
   }
 });
 
